@@ -9,6 +9,8 @@ function App() {
   const [width, setWidth] = useState(-1);
   const [height, setHeight] = useState(-1);
   const [extension, setExtension] = useState("mp4");
+  const [preset, setPreset] = useState("medium");
+  const [crfValue, setCrfValue] = useState(23);
   const [progress, setProgress] = useState(0);
   const [message, setMessage] = useState("");
 
@@ -47,7 +49,8 @@ function App() {
       ffmpegArguments.push('-vf', `scale=${width}:${height}`);
     }
     const outputFileName = `output.${extension}`;
-    ffmpegArguments.push(outputFileName);
+    ffmpegArguments.push('-crf', crfValue.toString(), '-preset', preset, outputFileName);
+    console.log(ffmpegArguments);
     await ffmpeg.run(...ffmpegArguments);
 
     setMessage('Complete transcoding');
@@ -97,16 +100,29 @@ function App() {
           <span className="tooltip">Use -1 for aspect ratio preserving scaling</span>
         </div>
         <div>
-          <label> Extension:
-            <select value={extension} onChange={event => setExtension(event.target.value)}>
-              <option>mp4</option>
-              <option>mov</option>
-              <option>avi</option>
-              <option>mpeg</option>
-              <option>wmv</option>
-              <option>gif</option>
-            </select>
-          </label>
+          Extension:
+          <select value={extension} onChange={event => setExtension(event.target.value)}>
+            <option>mp4</option>
+            <option>mov</option>
+            <option>avi</option>
+            <option>mpeg</option>
+            <option>wmv</option>
+            <option>gif</option>
+          </select>
+        </div>
+        <div>
+          Compression preset: 
+          <label><input type="radio" value="ultrafast" checked={preset === "ultrafast"} onChange={event => setPreset(event.target.value)} />Ultrafast</label>
+          <label><input type="radio" value="superfast" checked={preset === "superfast"} onChange={event => setPreset(event.target.value)} />Superfast</label>
+          <label><input type="radio" value="veryfast" checked={preset === "veryfast"} onChange={event => setPreset(event.target.value)} />Veryfast</label>
+          <label><input type="radio" value="faster" checked={preset === "faster"} onChange={event => setPreset(event.target.value)} />Faster</label>
+          <label><input type="radio" value="fast" checked={preset === "fast"} onChange={event => setPreset(event.target.value)} />Fast</label>
+          <label><input type="radio" value="medium" checked={preset === "medium"} onChange={event => setPreset(event.target.value)} />Medium</label>
+          <label><input type="radio" value="slow" checked={preset === "slow"} onChange={event => setPreset(event.target.value)} />Slow</label>
+          <label><input type="radio" value="slower" checked={preset === "slower"} onChange={event => setPreset(event.target.value)} />Slower</label>
+        </div>
+        <div>
+          CRF: <input type="range" name="CRF" min="0" max="51" value={crfValue} onChange={event => setCrfValue(event.target.valueAsNumber)}></input> {crfValue} <span className="tooltip">0 is loseless, 51 is worst</span>
         </div>
         <div>
           <input type="submit" value="Convert" onClick={event => {event.preventDefault(); handleConvert();}} />
