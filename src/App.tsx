@@ -8,7 +8,7 @@ function App() {
   const [fps, setFps] = useState(0);
   const [width, setWidth] = useState(-1);
   const [height, setHeight] = useState(-1);
-  const [extension, setExtension] = useState("");
+  const [extension, setExtension] = useState("mp4");
   const [progress, setProgress] = useState(0);
   const [message, setMessage] = useState("");
 
@@ -98,7 +98,7 @@ function App() {
         </div>
         <div>
           <label> Extension:
-            <select onChange={event => setExtension(event.target.value)} defaultValue="mp4">
+            <select value={extension} onChange={event => setExtension(event.target.value)}>
               <option>mp4</option>
               <option>mov</option>
               <option>avi</option>
