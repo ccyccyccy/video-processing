@@ -14,6 +14,7 @@ function App() {
   const [crfValue, setCrfValue] = useState(23);
   const [progress, setProgress] = useState(0);
   const [message, setMessage] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const uploaderEl = useRef<HTMLInputElement>(null);
 
@@ -27,6 +28,13 @@ function App() {
       console.error("No files uploaded");
       return;
     }
+
+    if (isProcessing) {
+      console.error("Is already processing");
+      return;
+    }
+
+    setIsProcessing(true);
 
     const ffmpeg = createFFmpeg({
       log: true,
@@ -66,6 +74,7 @@ function App() {
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
     }, 0);
+    setIsProcessing(false);
   }
 
   return (
@@ -128,7 +137,7 @@ function App() {
         </div>
       </form>
       <div>
-        <input type="submit" value="Convert" onClick={event => {event.preventDefault(); handleConvert();}} />
+        <input type="submit" value="Convert" disabled={isProcessing} onClick={event => {event.preventDefault(); handleConvert();}} />
       </div>
     </div>
   );
