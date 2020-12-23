@@ -1,7 +1,7 @@
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import './App.css';
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
-import uploadLogo from './uploadLogo.png';
+import { useDropzone } from 'react-dropzone';
 
 function App() {
   const [isCustomSize, setIsCustomSize] = useState(false);
@@ -15,22 +15,17 @@ function App() {
   const [progress, setProgress] = useState(0);
   const [message, setMessage] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
 
-  const uploaderEl = useRef<HTMLInputElement>(null);
 
   async function handleConvert() {
-    if (!uploaderEl.current) {
-      console.error("Upload file element is null");
-      return;
-    }
-
-    if (!uploaderEl.current.files || !uploaderEl.current.files[0]) {
-      console.error("No files uploaded");
-      return;
-    }
-
     if (isProcessing) {
       console.error("Is already processing");
+      return;
+    }
+
+    if (!file) {
+      console.error("No files uploaded");
       return;
     }
 
@@ -43,7 +38,6 @@ function App() {
       },
     });
 
-    const file = uploaderEl.current.files[0];
     setMessage('Loading...');
     await ffmpeg.load();
 
@@ -77,16 +71,32 @@ function App() {
     setIsProcessing(false);
   }
 
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    setFile(acceptedFiles[0]);
+  }, []);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
+
+  const style = {
+    width  : "50vw",
+    height : "50vh",
+    border : "1px solid black"
+  };
+
   return (
     <div className="container">
-      <div className="uploadContainer">
-        <label>
-          <img src={uploadLogo} alt="Upload Logo" className="uploadImg" />
-          <div><input type="file" accept="video/*,image/gif" ref={uploaderEl} /></div>
-        </label>
+      <div className="uploaderContainer">
+        <div {...getRootProps({style})}>
+          <input {...getInputProps()} multiple={false} type="file" accept="video/*,image/gif" />
+          {
+            isDragActive ?
+              <p>Drop the files here ...</p> :
+              <p>Drag 'n' drop some files here, or click to select files</p>
+          }
+        </div>
       </div>
       <form className="mainForm">
-        <div>{message} {progress !== 0 && <progress value={progress} />}</div>
+        <div className="messageAndProgress">{message} {progress !== 0 && <progress value={progress} />}</div>
         <div className="fieldLabel">FPS:</div>
         <div className="fields">
           <label className="option"> Same as source
@@ -137,7 +147,7 @@ function App() {
         </div>
       </form>
       <div>
-        <input type="submit" value="Convert" disabled={isProcessing} onClick={event => {event.preventDefault(); handleConvert();}} />
+        <input id="convertButton" type="submit" value="Convert" disabled={isProcessing} onClick={event => { event.preventDefault(); handleConvert(); }} />
       </div>
     </div>
   );
