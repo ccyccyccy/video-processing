@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import './App.css';
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
+import uploadLogo from './uploadLogo.png';
 
 function App() {
   const [isCustomSize, setIsCustomSize] = useState(false);
@@ -68,39 +69,39 @@ function App() {
   }
 
   return (
-    <div className="App">
-      <form>
-        <div>
-          <label> Choose a video file:
-            <input type="file" accept="video/*,image/gif" ref={uploaderEl} />
-          </label>
-        </div>
-        {message && <div>{message}</div>}
-        {progress !== 0 && <progress value={progress} />}
-        <div>
-          FPS:
-          <label> Same as source
+    <div className="container">
+      <div className="uploadContainer">
+        <label>
+          <img src={uploadLogo} alt="Upload Logo" className="uploadImg" />
+          <div><input type="file" accept="video/*,image/gif" ref={uploaderEl} /></div>
+        </label>
+      </div>
+      <form className="mainForm">
+        <div>{message} {progress !== 0 && <progress value={progress} />}</div>
+        <div className="fieldLabel">FPS:</div>
+        <div className="fields">
+          <label className="option"> Same as source
             <input type="checkbox" checked={!isCustomFps} onChange={event => setIsCustomFps(!isCustomFps)} />
           </label>
-          <input type="number" disabled={!isCustomFps} name="fps" value={fps} onChange={event => setFps(event.target.valueAsNumber)} />
+          <input className="option" type="number" disabled={!isCustomFps} name="fps" value={fps} onChange={event => setFps(event.target.valueAsNumber)} />
         </div>
-        <div>
-          Size:
-          <label> Same as source
+        <div className="fieldLabel">Size: </div>
+        <div className="fields">
+          <label className="option"> Same as source
             <input type="checkbox" checked={!isCustomSize} onChange={event => setIsCustomSize(!isCustomSize)} />
           </label>
-          <label>
+          <label className="option">
             Width:
             <input type="number" disabled={!isCustomSize} name="width" value={width} onChange={event => setWidth(event.target.valueAsNumber)} />
           </label>
-          <label>
+          <label className="option">
             Height:
             <input type="number" disabled={!isCustomSize} name="height" value={height} onChange={event => setHeight(event.target.valueAsNumber)} />
           </label>
           <span className="tooltip">Use -1 for aspect ratio preserving scaling</span>
         </div>
-        <div>
-          Extension:
+        <div className="fieldLabel">Extension: </div>
+        <div className="fields">
           <select value={extension} onChange={event => setExtension(event.target.value)}>
             <option>mp4</option>
             <option>mov</option>
@@ -110,24 +111,25 @@ function App() {
             <option>gif</option>
           </select>
         </div>
-        <div>
-          Compression preset: 
-          <label><input type="radio" value="ultrafast" checked={preset === "ultrafast"} onChange={event => setPreset(event.target.value)} />Ultrafast</label>
-          <label><input type="radio" value="superfast" checked={preset === "superfast"} onChange={event => setPreset(event.target.value)} />Superfast</label>
-          <label><input type="radio" value="veryfast" checked={preset === "veryfast"} onChange={event => setPreset(event.target.value)} />Veryfast</label>
-          <label><input type="radio" value="faster" checked={preset === "faster"} onChange={event => setPreset(event.target.value)} />Faster</label>
-          <label><input type="radio" value="fast" checked={preset === "fast"} onChange={event => setPreset(event.target.value)} />Fast</label>
-          <label><input type="radio" value="medium" checked={preset === "medium"} onChange={event => setPreset(event.target.value)} />Medium</label>
-          <label><input type="radio" value="slow" checked={preset === "slow"} onChange={event => setPreset(event.target.value)} />Slow</label>
-          <label><input type="radio" value="slower" checked={preset === "slower"} onChange={event => setPreset(event.target.value)} />Slower</label>
+        <div className="fieldLabel">Compression preset: </div>
+        <div className="fields">
+          <label className="option"><input type="radio" value="ultrafast" checked={preset === "ultrafast"} onChange={event => setPreset(event.target.value)} />Ultrafast</label>
+          <label className="option"><input type="radio" value="superfast" checked={preset === "superfast"} onChange={event => setPreset(event.target.value)} />Superfast</label>
+          <label className="option"><input type="radio" value="veryfast" checked={preset === "veryfast"} onChange={event => setPreset(event.target.value)} />Veryfast</label>
+          <label className="option"><input type="radio" value="faster" checked={preset === "faster"} onChange={event => setPreset(event.target.value)} />Faster</label>
+          <label className="option"><input type="radio" value="fast" checked={preset === "fast"} onChange={event => setPreset(event.target.value)} />Fast</label>
+          <label className="option"><input type="radio" value="medium" checked={preset === "medium"} onChange={event => setPreset(event.target.value)} />Medium</label>
+          <label className="option"><input type="radio" value="slow" checked={preset === "slow"} onChange={event => setPreset(event.target.value)} />Slow</label>
+          <label className="option"><input type="radio" value="slower" checked={preset === "slower"} onChange={event => setPreset(event.target.value)} />Slower</label>
         </div>
-        <div>
-          CRF: <input type="range" name="CRF" min="0" max="51" value={crfValue} onChange={event => setCrfValue(event.target.valueAsNumber)}></input> {crfValue} <span className="tooltip">0 is loseless, 51 is worst</span>
-        </div>
-        <div>
-          <input type="submit" value="Convert" onClick={event => {event.preventDefault(); handleConvert();}} />
+        <div className="fieldLabel">CRF: </div>
+        <div className="fields">
+          <input type="range" name="CRF" min="0" max="51" value={crfValue} onChange={event => setCrfValue(event.target.valueAsNumber)}></input> {crfValue} <output className="tooltip">0 is loseless, 51 is worst</output>
         </div>
       </form>
+      <div>
+        <input type="submit" value="Convert" onClick={event => {event.preventDefault(); handleConvert();}} />
+      </div>
     </div>
   );
 }
