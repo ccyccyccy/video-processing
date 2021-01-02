@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import './App.css';
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 import { useDropzone } from 'react-dropzone';
@@ -78,22 +78,33 @@ function App() {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
 
   const style = {
-    width  : "50vw",
-    height : "50vh",
-    border : "1px solid black"
+    // width: "50vw",
+    // height: "50vh",
+    background: isDragActive ? "#FFFFFF" : "#C8DADF",
+    outline: "2px dashed #92B0B3",
+    outlineOffset: isDragActive ? "-20px" : "-10px",
+    padding: "100px 20px",
+    transition: "outline-offset .15s ease-in-out, background-color .15s linear"
   };
 
   return (
     <div className="container">
       <div className="uploaderContainer">
-        <div {...getRootProps({style})}>
-          <input {...getInputProps()} multiple={false} type="file" accept="video/*,image/gif" />
-          {
-            isDragActive ?
-              <p>Drop the files here ...</p> :
-              <p>Drag 'n' drop some files here, or click to select files</p>
-          }
-        </div>
+        {file === null ?
+          <div {...getRootProps({ style })}>
+            <input {...getInputProps()} multiple={false} type="file" accept="video/*,image/gif" />
+            <div>
+              <svg className="boxIcon" xmlns="http://www.w3.org/2000/svg" width="50" height="43" viewBox="0 0 50 43">
+                <path d="M48.4 26.5c-.9 0-1.7.7-1.7 1.7v11.6h-43.3v-11.6c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v13.2c0 .9.7 1.7 1.7 1.7h46.7c.9 0 1.7-.7 1.7-1.7v-13.2c0-1-.7-1.7-1.7-1.7zm-24.5 6.1c.3.3.8.5 1.2.5.4 0 .9-.2 1.2-.5l10-11.6c.7-.7.7-1.7 0-2.4s-1.7-.7-2.4 0l-7.1 8.3v-25.3c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v25.3l-7.1-8.3c-.7-.7-1.7-.7-2.4 0s-.7 1.7 0 2.4l10 11.6z"></path>
+              </svg>
+              <p>Choose a file or drag it here</p>
+            </div>
+          </div> :
+          <div className="checkmarkContainer">
+            <svg className="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><circle className="checkmark__circle" cx="26" cy="26" r="25" fill="none" /><path className="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" /></svg>
+            <p>File <span className="tooltip">{file.name}</span> successfully uploaded!</p>
+          </div>
+        }
       </div>
       <form className="mainForm">
         <div className="messageAndProgress">{message} {progress !== 0 && <progress value={progress} />}</div>
