@@ -1,4 +1,4 @@
-Frontend wrapper around `ffmpeg`
+Frontend for simple local video file conversion using [`ffmpeg.wasm`](https://github.com/ffmpegwasm/ffmpeg.wasm).
 
 ### `yarn start`
 
